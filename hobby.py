@@ -25,10 +25,8 @@ class HobbyPoint(complex):
         self.phi = 0  # Offset angle.
         self.psi = 0  # Another offset angle.
 
-    def __str__(self) -> str:
-        return f"Point={(self.x, self.y)}, " \
-               f"alpha={self.alpha}, beta={self.beta}, theta={self.theta}, phi={self.phi}, d_val={self.d_val}"
-
+    def __repr__(self) -> str:
+        return f"{(self.x, self.y)}"
 
 class HobbyCurve:
     """A class for calculating the control points required to draw a Hobby curve."""
@@ -72,8 +70,7 @@ class HobbyCurve:
             z_i.psi = np.arctan2(polygonal_turn.imag, polygonal_turn.real)
 
     def calculate_theta_vals(self) -> None:
-        """Calculates the theta values by first solving a linear system and then bootstrapping
-        the rest of the values."""
+        """Calculates the theta values by creating a linear system whose solutions are the values."""
         A = np.zeros(self.num_points)  # Inappropriate names, but they mirror Knuth's notation.
         B = np.zeros(self.num_points)
         C = np.zeros(self.num_points)
@@ -173,7 +170,6 @@ def hobby_ctrl_points(points: list[tuple], tension: float = 1, cyclic: bool = Tr
     # Pretty print control points.
     precision = 10
     space = precision + max_pad + 2  # +2 for negative sign, extra space
-    print(max_pad)
     i = 0
     while i < len(ctrl_points) - 1:
         x_1, y_1 = ctrl_points[i]
