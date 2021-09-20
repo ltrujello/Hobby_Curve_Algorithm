@@ -9,6 +9,7 @@ independently and dependently specify and vary the available options and numeric
 path being cyclic, the tension, and the curl.
 """
 
+
 # Run `pytest test.py`.
 
 def test_cyclic():
@@ -50,7 +51,7 @@ def generate_points(num_points):
     return points
 
 
-def run_and_compare_algorithms(tension=1, cyclic=True, curl=1):
+def run_and_compare_algorithms(tension=1, cyclic=False, curl=1):
     """Wrapper for testing running the algorithms against each other."""
     for num_points in range(10, 21):
         input_points = generate_points(num_points)

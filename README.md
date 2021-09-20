@@ -1,7 +1,7 @@
 # Hobby Curve Algorithm
 This is a Python implementation of John Hobby's curve drawing algorithm. The algorithm
-takes in a list of points and calculates the control points of Bezier splines which pass through 
-each point and its successor.
+takes in a sequence of points and calculates the control points which describe Bezier curves 
+that interpolate the sequence very nicely. 
 
 ## Usage
 My implementation is `hobby.py`, so use that. `python2_hobby.py` is an older working version I used to compare against.
@@ -22,7 +22,7 @@ control points. By "pretty prints", I mean it aligns the calculated tuples up in
 ```python
 >>> from hobby import hobby_ctrl_points
 >>> points = [(0, 0), (10, 10), (20, 0), (10, -10)]
->>> hobby_ctrl_points(points, tension=3)
+>>> hobby_ctrl_points(points, cyclic=True, tension=3)
 (0.0000000000  , 1.8409491661  ) and (8.1590508339  , 10.0000000000 )
 (11.8409491661 , 10.0000000000 ) and (20.0000000000 , 1.8409491661  )
 (20.0000000000 , -1.8409491661 ) and (11.8409491661 , -10.0000000000)

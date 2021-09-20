@@ -28,11 +28,12 @@ class HobbyPoint(complex):
     def __repr__(self) -> str:
         return f"{(self.x, self.y)}"
 
+
 class HobbyCurve:
     """A class for calculating the control points required to draw a Hobby curve."""
 
-    def __init__(self, points: list[tuple], tension: float = 1, cyclic: bool = True, begin_curl: float = 1,
-                 end_curl: float = 1):
+    def __init__(self, points: list[tuple], tension: float = 1, cyclic: bool = False, begin_curl: float = 1,
+                 end_curl: float = 1) -> None:
         self.points = [HobbyPoint(*point, tension) for point in points]
         self.ctrl_pts = []
         self.is_cyclic = cyclic
@@ -61,7 +62,7 @@ class HobbyCurve:
     def calculate_psi_vals(self) -> None:
         """Calculates the psi values by subtracting pairwise phases."""
         # Skip first and last point if path is non-cyclic
-        point_inds = range(0, self.num_points) if self.is_cyclic else range(1, self.num_points - 1)
+        point_inds = range(self.num_points) if self.is_cyclic else range(1, self.num_points - 1)
         for i in point_inds:
             z_h = self.points[i - 1]
             z_i = self.points[i]
@@ -78,6 +79,7 @@ class HobbyCurve:
         R = np.zeros(self.num_points)
 
         # Calculate the entries of the five vectors.
+        # Skip first and last point if path is non-cyclic.
         point_ind = range(self.num_points) if self.is_cyclic else range(1, self.num_points - 1)
         for i in point_ind:
             z_h = self.points[i - 1]
@@ -90,28 +92,24 @@ class HobbyCurve:
             D[i] = z_j.beta / (z_i.alpha ** 2 * z_i.d_val)
             R[i] = -B[i] * z_i.psi - D[i] * z_j.psi
 
-        # Special consideration for non-cyclic paths.
-        if not self.is_cyclic:
-            A[0] = B[0] = C[-1] = D[-1] = 0
-
         # Set up matrix M such that the soln. Mx = R are the theta values.
         M = np.zeros((self.num_points, self.num_points))
         for i in range(self.num_points):
-            # Fill i-th row of M, 0 < i < num_pts
+            # Fill i-th row of M
             M[i][i - 1] = A[i]
             M[i][i] = B[i] + C[i]
             M[i][(i + 1) % self.num_points] = D[i]
 
-        # Special formulas for first and last rows of M with non-cyclic paths
+        # Special formulas for first and last rows of M with non-cyclic paths.
         if not self.is_cyclic:
-            # First row
+            # First row of M
             alpha_0 = self.points[0].alpha
             beta_1 = self.points[1].beta
             xi_0 = (alpha_0 ** 2 * self.begin_curl) / beta_1 ** 2
             M[0][0] = alpha_0 * xi_0 + 3 - beta_1
             M[0][1] = (3 - alpha_0) * xi_0 + beta_1
             R[0] = -((3 - alpha_0) * xi_0 + beta_1) * self.points[1].psi
-            # Last row
+            # Last row of M
             alpha_n_1 = self.points[-2].alpha
             beta_n = self.points[-1].beta
             xi_n = (beta_n ** 2 * self.end_curl) / alpha_n_1 ** 2
@@ -151,8 +149,8 @@ class HobbyCurve:
         return repr(cartesian_points)
 
 
-def hobby_ctrl_points(points: list[tuple], tension: float = 1, cyclic: bool = True, begin_curl: float = 1,
-                      end_curl: float = 1) -> None:
+def hobby_ctrl_points(points: list[tuple], tension: float = 1, cyclic: bool = False, begin_curl: float = 1,
+                      end_curl: float = 1) -> list[tuple]:
     """Calculates all cubic Bezier control points, based on John Hobby's algorithm, and pretty prints them."""
     curve = HobbyCurve(points, tension=tension, cyclic=cyclic, begin_curl=begin_curl, end_curl=end_curl)
     ctrl_points = curve.get_crl_points()
@@ -162,14 +160,14 @@ def hobby_ctrl_points(points: list[tuple], tension: float = 1, cyclic: bool = Tr
     for ctrl_point in ctrl_points:
         x, y = ctrl_point
         # Calculate number of digits in x, y before decimal, and take the max for nice padding.
-        padding = max(0 if abs(x) < 10 else int(np.ceil(np.log10(abs(x)))),
-                      0 if abs(y) < 10 else int(np.ceil(np.log10(abs(y)))))
+        padding = max(1 if abs(x) <= 0.1 else int(np.ceil(np.log10(abs(x)))) + 1,
+                      1 if abs(y) <= 0.1 else int(np.ceil(np.log10(abs(y)))) + 1)
         if max_pad < padding:
             max_pad = padding
 
     # Pretty print control points.
     precision = 10
-    space = precision + max_pad + 2  # +2 for negative sign, extra space
+    space = precision + max_pad + 1  # +1 for negative sign
     i = 0
     while i < len(ctrl_points) - 1:
         x_1, y_1 = ctrl_points[i]
@@ -178,6 +176,7 @@ def hobby_ctrl_points(points: list[tuple], tension: float = 1, cyclic: bool = Tr
               f"and "
               f"({x_2:<{space}.{precision}f}, {y_2:<{space}.{precision}f})")
         i += 2
+    return ctrl_points
 
 
 def velocity(theta: float, phi: float) -> float:
