@@ -8,21 +8,24 @@ My implementation is `hobby.py`, so use that. `python2_hobby.py` is an older wor
 
 The main and only function you need to use is
 ```python
-def hobby_ctrl_points(points: list[tuple], tension: float = 1, cyclic: bool = True, begin_curl: float = 1,
-                      end_curl: float = 1) -> None:
-    """Calculates all cubic Bezier control points, based on John Hobby's algorithm, and pretty prints them."""
+def hobby_ctrl_points(points: list[tuple],
+                      tension: float = 1, 
+                      cyclic: bool = True, 
+                      begin_curl: float = 1,
+                      end_curl: float = 1) -> list[tuple]:
+    """Calculates and returns all cubic Bezier control points, based on John Hobby's algorithm, and pretty prints them."""
 ```
-Supply your points that you want to interpolate in the `points` argument and specify any additional parameters you want, 
-although sensible default values are used.
+Supply the points that you want to interpolate in the `points` argument and specify any additional parameters you want. 
+As you can tell, default values for these parameters are provided.
 
-This function writes to `sys.std.out` (your terminal, if you run it in a terminal) and pretty prints the calculated 
+This function returns a list of the control points and writes to `sys.std.out` (your terminal, if you run it in a terminal), pretty printing the calculated 
 control points. By "pretty prints", I mean it aligns the calculated tuples up in columns for easy viewing.
 
 ## Example
 ```python
 >>> from hobby import hobby_ctrl_points
 >>> points = [(0, 0), (10, 10), (20, 0), (10, -10)]
->>> hobby_ctrl_points(points, cyclic=True, tension=3)
+>>> ctrl_pts = hobby_ctrl_points(points, cyclic=True, tension=3)
 (0.0000000000  , 1.8409491661  ) and (8.1590508339  , 10.0000000000 )
 (11.8409491661 , 10.0000000000 ) and (20.0000000000 , 1.8409491661  )
 (20.0000000000 , -1.8409491661 ) and (11.8409491661 , -10.0000000000)

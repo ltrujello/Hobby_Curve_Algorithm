@@ -26,7 +26,8 @@ class HobbyPoint(complex):
         self.psi = 0  # Another offset angle.
 
     def __repr__(self) -> str:
-        return f"{(self.x, self.y)}"
+        return f"{(self.x, self.y)}" \
+               f"alpha={self.alpha}, beta={self.beta}, theta={self.theta}, psi={self.psi}, phi={self.phi}, d_val={self.d_val}"
 
 
 class HobbyCurve:
@@ -41,7 +42,7 @@ class HobbyCurve:
         self.end_curl = end_curl
         self.num_points = len(points)
 
-    def get_crl_points(self) -> list[tuple]:
+    def get_ctrl_points(self) -> list[tuple]:
         """Calculates and returns all of the control points of the Hobby curve."""
         self.calculate_d_vals()
         self.calculate_psi_vals()
@@ -66,7 +67,7 @@ class HobbyCurve:
         for i in point_inds:
             z_h = self.points[i - 1]
             z_i = self.points[i]
-            z_j = self.points[(i + 1) % len(self.points)]
+            z_j = self.points[(i + 1) % self.num_points]
             polygonal_turn = (z_j - z_i) / (z_i - z_h)
             z_i.psi = np.arctan2(polygonal_turn.imag, polygonal_turn.real)
 
@@ -84,7 +85,7 @@ class HobbyCurve:
         for i in point_ind:
             z_h = self.points[i - 1]
             z_i = self.points[i]
-            z_j = self.points[(i + 1) % len(self.points)]
+            z_j = self.points[(i + 1) % self.num_points]
 
             A[i] = z_h.alpha / (z_i.beta ** 2 * z_h.d_val)
             B[i] = (3 - z_h.alpha) / (z_i.beta ** 2 * z_h.d_val)
@@ -153,7 +154,7 @@ def hobby_ctrl_points(points: list[tuple], tension: float = 1, cyclic: bool = Fa
                       end_curl: float = 1) -> list[tuple]:
     """Calculates all cubic Bezier control points, based on John Hobby's algorithm, and pretty prints them."""
     curve = HobbyCurve(points, tension=tension, cyclic=cyclic, begin_curl=begin_curl, end_curl=end_curl)
-    ctrl_points = curve.get_crl_points()
+    ctrl_points = curve.get_ctrl_points()
 
     # Calculate whitespace padding for pretty print.
     max_pad = 0

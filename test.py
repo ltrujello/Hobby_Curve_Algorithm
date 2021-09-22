@@ -59,7 +59,7 @@ def run_and_compare_algorithms(tension=1, cyclic=False, curl=1):
             " .. ".join([str(point) for point in input_points]) + f" {'.. cycle' if cyclic else ''} ",
             options=f"tension ={tension}, curl ={curl}")
         new_ctrl_points = HobbyCurve(input_points, cyclic=cyclic, tension=tension, begin_curl=curl,
-                                     end_curl=curl).get_crl_points()
+                                     end_curl=curl).get_ctrl_points()
         compare_ctrl_points(old_ctrl_points, new_ctrl_points)
 
 
