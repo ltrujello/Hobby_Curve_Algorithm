@@ -1,7 +1,6 @@
 .DS_Store  # Well done, Apple.
 .idea
 
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
