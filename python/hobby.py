@@ -25,22 +25,33 @@ class HobbyPoint(complex):
         self.phi = 0  # Offset angle.
         self.psi = 0  # Another offset angle.
 
+    def debug_info(self) -> str:
+        return f"{(self.x, self.y)} " \
+               f"alpha={self.alpha}, " \
+               f"beta={self.beta}, " \
+               f"theta={self.theta}, " \
+               f"psi={self.psi}, " \
+               f"phi={self.phi}, " \
+               f"d_val={self.d_val}"
+
     def __repr__(self) -> str:
-        return f"{(self.x, self.y)}" \
-               f"alpha={self.alpha}, beta={self.beta}, theta={self.theta}, psi={self.psi}, phi={self.phi}, d_val={self.d_val}"
+        return f"{(self.x, self.y)}"
 
 
 class HobbyCurve:
     """A class for calculating the control points required to draw a Hobby curve."""
 
     def __init__(self, points: list[tuple], tension: float = 1, cyclic: bool = False, begin_curl: float = 1,
-                 end_curl: float = 1) -> None:
+                 end_curl: float = 1, debug=False) -> None:
+        if len(points) < 2:
+            raise ValueError("Algorithm needs more than 2 points")
         self.points = [HobbyPoint(*point, tension) for point in points]
         self.ctrl_pts = []
         self.is_cyclic = cyclic
         self.begin_curl = begin_curl
         self.end_curl = end_curl
         self.num_points = len(points)
+        self.debug_mode = debug
 
     def get_ctrl_points(self) -> list[tuple]:
         """Calculates and returns all of the control points of the Hobby curve."""
@@ -48,6 +59,7 @@ class HobbyCurve:
         self.calculate_psi_vals()
         self.calculate_theta_vals()
         self.calculate_phi_vals()
+        self.show_debug_msg()
         self.ctrl_pts = self.calculate_ctrl_pts()
         return self.ctrl_pts
 
@@ -68,7 +80,12 @@ class HobbyCurve:
             z_h = self.points[i - 1]
             z_i = self.points[i]
             z_j = self.points[(i + 1) % self.num_points]
-            polygonal_turn = (z_j - z_i) / (z_i - z_h)
+            try:
+                polygonal_turn = (z_j - z_i) / (z_i - z_h)
+                print(z_j - z_i, z_i - z_h)
+            except ZeroDivisionError:
+                raise ZeroDivisionError(
+                    f"Consecutive points {(z_h.x, z_h.y)} and {(z_i.x, z_i.y)} cause zero division.")
             z_i.psi = np.arctan2(polygonal_turn.imag, polygonal_turn.real)
 
     def calculate_theta_vals(self) -> None:
@@ -145,15 +162,21 @@ class HobbyCurve:
             ctrl_pts.append((ctrl_pt_b.real, ctrl_pt_b.imag))
         return ctrl_pts
 
+    def show_debug_msg(self) -> None:
+        """Display each of the calculated quantities used in the algorithm run."""
+        if self.debug_mode:
+            for point in self.points:
+                print(point.debug_info())
+
     def __repr__(self) -> str:
         cartesian_points = [(point.real, point.imag) for point in self.points]
         return repr(cartesian_points)
 
 
 def hobby_ctrl_points(points: list[tuple], tension: float = 1, cyclic: bool = False, begin_curl: float = 1,
-                      end_curl: float = 1) -> list[tuple]:
+                      end_curl: float = 1, debug=False) -> list[tuple]:
     """Calculates all cubic Bezier control points, based on John Hobby's algorithm, and pretty prints them."""
-    curve = HobbyCurve(points, tension=tension, cyclic=cyclic, begin_curl=begin_curl, end_curl=end_curl)
+    curve = HobbyCurve(points, tension=tension, cyclic=cyclic, begin_curl=begin_curl, end_curl=end_curl, debug=debug)
     ctrl_points = curve.get_ctrl_points()
 
     # Calculate whitespace padding for pretty print.
