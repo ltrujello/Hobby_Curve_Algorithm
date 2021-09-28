@@ -6,7 +6,8 @@ I only meant to create a Python implementation, but then I needed one in Javascr
 ## Usage
 You probably want to use the Python implementation.
 
-My implementation is `hobby.py`, so use that. `python2_hobby.py` is an older working version I used to compare against.
+My implementation is `hobby.py`, so use that. `python2_hobby.py` is an older working version I found on 
+TeX StackExchange that I used to compare mine against.
 
 The main and only function you need to use is
 ```python
@@ -14,12 +15,18 @@ def hobby_ctrl_points(points: list[tuple],
                       tension: float=1, 
                       cyclic: bool=True, 
                       begin_curl: float=1,
-                      end_curl: float=1) -> list[tuple]:
+                      end_curl: float=1, 
+                      debug: bool=False) -> list[tuple]:
     """Calculates all cubic Bezier control points, based on John Hobby's algorithm, and pretty prints them."""
 ```
-Supply your points that you want to interpolate in the `points` argument and specify any additional parameters you want. As you can tell, default values are also provided.
+* **Input:** Supply your points that you want to interpolate in the `points` argument and specify any additional parameters you want. As you can tell, default values are also provided.
 
-This function returns a list of the control points that were calculated and writes to `sys.std.out` (your terminal, if you run it in a terminal) and pretty prints the control points. By "pretty prints", I mean it aligns the calculated tuples up in columns for easy viewing.
+* **Output:** This function returns a list of the control points that were calculated and writes to `sys.std.out` (your terminal, if you run it in a terminal) and pretty prints the control points. By "pretty prints", I mean it aligns the calculated tuples up in columns for easy viewing.
+
+* **Debug Mode:** Running this with `debug=True` will print out all of the parameters associated with each point that are used in the algorithm.
+This is useful for debugging if you are writing your own implementation. Because this algorithm relies on independent quantities to be 
+calculated correctly, if you have an error, this setting makes it easier for you to pinpoint which quantity you are calculating incorrectly and so you 
+can catch bugs faster. 
 
 ## Example
 ```python
