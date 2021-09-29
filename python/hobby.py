@@ -42,7 +42,7 @@ class HobbyCurve:
     """A class for calculating the control points required to draw a Hobby curve."""
 
     def __init__(self, points: list[tuple], tension: float = 1, cyclic: bool = False, begin_curl: float = 1,
-                 end_curl: float = 1, debug: bool=False) -> None:
+                 end_curl: float = 1, debug: bool = False) -> None:
         if len(points) < 2:
             raise ValueError("Algorithm needs more than 2 points")
         self.points = [HobbyPoint(*point, tension) for point in points]
@@ -155,7 +155,6 @@ class HobbyCurve:
             z_j = self.points[(i + 1) % self.num_points]
             rho_coefficient = z_i.alpha * velocity(z_i.theta, z_j.phi)
             sigma_coefficient = z_j.beta * velocity(z_j.phi, z_i.theta)
-
             ctrl_pt_a = z_i + (1 / 3) * rho_coefficient * cmath.exp(complex(0, z_i.theta)) * (z_j - z_i)
             ctrl_pt_b = z_j - (1 / 3) * sigma_coefficient * cmath.exp(complex(0, -z_j.phi)) * (z_j - z_i)
             ctrl_pts.append((ctrl_pt_a.real, ctrl_pt_a.imag))
@@ -174,7 +173,7 @@ class HobbyCurve:
 
 
 def hobby_ctrl_points(points: list[tuple], tension: float = 1, cyclic: bool = False, begin_curl: float = 1,
-                      end_curl: float = 1, debug: bool=False) -> list[tuple]:
+                      end_curl: float = 1, debug: bool = False) -> list[tuple]:
     """Calculates all cubic Bezier control points, based on John Hobby's algorithm, and pretty prints them."""
     curve = HobbyCurve(points, tension=tension, cyclic=cyclic, begin_curl=begin_curl, end_curl=end_curl, debug=debug)
     ctrl_points = curve.get_ctrl_points()
