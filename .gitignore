@@ -1,3 +1,6 @@
+CMakeLists.txt
+cmake-build-debug
+
 .DS_Store  # Well done, Apple.
 .idea
 
