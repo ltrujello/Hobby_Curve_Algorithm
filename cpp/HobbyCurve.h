@@ -1,7 +1,3 @@
-//
-// Created by Luke Trujillo on 9/23/21.
-//
-
 #ifndef CPP_HOBBYCURVE_H
 #define CPP_HOBBYCURVE_H
 #include <vector>

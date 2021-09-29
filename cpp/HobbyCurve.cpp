@@ -1,8 +1,3 @@
-//
-// Created by Luke Trujillo on 9/23/21.
-//
-
-#include <iostream>
 #include <Eigen>
 #include <cmath>
 #include <vector>
