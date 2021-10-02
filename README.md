@@ -1,7 +1,8 @@
 # Hobby Curve Algorithm
-This contains a Python implementation and a separate Javascript implementation of John Hobby's curve drawing algorithm. The algorithm takes in a list of points and calculates the control points of a sequence of Bezier splines which pass through the given points. The resulting shape is very nice and suitable for mathematical drawings.
+This contains separate Python, Javascript, and C++ implementations of John Hobby's curve drawing algorithm. The algorithm takes in a list of points and calculates the control points of a sequence of Bezier splines which pass through the given points. The resulting shape is very nice and suitable for mathematical drawings.
 
-I only meant to create a Python implementation, but then I needed one in Javascript to run in a browser. So now that's here too.
+I only meant to create a Python implementation, but I needed one in Javascript to run in a browser so I wrote one in Javascript. 
+Then I thought I could use a C++ wrapped implementation for Javascript. So now all three are here.
 
 ## Usage
 You probably want to use the Python implementation.
@@ -19,7 +20,7 @@ def hobby_ctrl_points(points: list[tuple],
                       debug: bool=False) -> list[tuple]:
     """Calculates all cubic Bezier control points, based on John Hobby's algorithm, and pretty prints them."""
 ```
-* **Input:** Supply your points that you want to interpolate in the `points` argument and specify any additional parameters you want. As you can tell, default values are also provided.
+* **Input:** Supply the points that you want to interpolate in the `points` argument and specify any additional parameters you want. As you can tell, default values are also provided.
 
 * **Output:** This function returns a list of the control points that were calculated and writes to `sys.std.out` (your terminal, if you run it in a terminal) and pretty prints the control points. By "pretty prints", I mean it aligns the calculated tuples up in columns for easy viewing.
 
@@ -38,7 +39,7 @@ can catch bugs faster.
 (20.0000000000 , -1.8409491661 ) and (11.8409491661 , -10.0000000000)
 (8.1590508339  , -10.0000000000) and (0.0000000000  , -1.8409491661 )
 ```
-
+The Javascript and C++ implementations work similarly.
 
 ## Motivation
 I originally made this to supersede an existing Python implementation `python2_hobby.py` because it is very bad Python. It's very messy code, overcomplicated, and  it is actually implemented incorrectly in two places that luckily cancel each 
